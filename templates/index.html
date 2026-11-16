@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Guess Game</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<!-- START POPUP -->
+{% if progress == "" and popup == "" %}
+<div class="modal">
+
+    <form method="POST"
+          action="/game"
+          class="modal-content">
+
+        <h2>🎮 Start Game</h2>
+
+        <select name="level">
+
+            <option value="easy">Easy 😊</option>
+            <option value="medium">Medium 😎</option>
+            <option value="hard">Hard 😈</option>
+
+        </select>
+
+        <button type="submit" name="start" value="1">
+            Start
+        </button>
+
+    </form>
+
+</div>
+{% endif %}
+
+<!-- GAME -->
+<div class="container">
+
+    <div class="box">
+
+        <h1>🔐 Guess Word</h1>
+
+        {% if first_letter %}
+
+        <!-- HINT -->
+        <div class="hint">
+
+            <p>First Letter: {{ first_letter }}</p>
+            <p>Last Letter: {{ last_letter }}</p>
+            <p>Length: {{ word_length }}</p>
+
+        </div>
+
+        <!-- WORD PROGRESS -->
+        <div class="progress">
+            {{ progress }}
+        </div>
+
+        <!-- GUESS FORM -->
+        <form method="POST" action="/game">
+
+            <input type="text"
+                   name="guess"
+                   placeholder="Enter word"
+                   required>
+
+            <button type="submit">Guess</button>
+
+        </form>
+
+        <!-- RESULT -->
+        <p>{{ result }}</p>
+
+        <!-- HEARTS -->
+        <h2>{{ hearts_left }}</h2>
+
+        <!-- TIMER -->
+        <h2 id="timer">⏰ {{ time_left }} sec</h2>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+<!-- WIN POPUP -->
+{% if popup == "win" %}
+
+<audio autoplay>
+    <source src="{{ url_for('static', filename='sounds/win.mp3') }}"
+            type="audio/mpeg">
+</audio>
+
+<div class="modal">
+
+    <div class="modal-content">
+
+        <h1>🎉 Congratulations!</h1>
+
+        <p>You Win The Game 😍</p>
+
+        <a href="/game">
+            <button>Play Again</button>
+        </a>
+
+    </div>
+
+</div>
+{% endif %}
+
+<!-- LOSE POPUP -->
+{% if popup == "lose" %}
+
+<audio autoplay>
+    <source src="{{ url_for('static', filename='sounds/lose.mp3') }}"
+            type="audio/mpeg">
+</audio>
+
+<div class="modal">
+
+    <div class="modal-content">
+
+        <h1>💀 You Failed!</h1>
+
+        <p>Better Luck Next Time 😢</p>
+
+        <a href="/game">
+            <button>Try Again</button>
+        </a>
+
+    </div>
+
+</div>
+{% endif %}
+
+<!-- LIVE TIMER SCRIPT -->
+<script>
+let timeLeft = {{ time_left }};
+let timer = document.getElementById("timer");
+
+setInterval(function () {
+
+    if (timeLeft > 0) {
+        timeLeft--;
+        timer.innerHTML = "⏰ " + timeLeft + " sec";
+    }
+
+}, 1000);
+</script>
+
+</body>
+</html>
